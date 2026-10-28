@@ -1,0 +1,33 @@
+{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+{% for field in form %}
+  <div class="form-field{% if field.name == 'categories' %} form-field-checkbox-group{% elif field.widget_type == 'textarea' %} form-field-textarea{% endif %}">
+    {% if field.name != 'categories' %}
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {% endif %}
+
+    {% if field.name == 'categories' %}
+      <div class="checkbox-grid" id="{{ field.id_for_label }}_group">
+        {% for choice in field %}
+          <div class="checkbox-item">
+            {{ choice.tag }}
+            <label class="checkbox-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      {% if field.field.widget.input_type == "password" %}
+        <div class="input-group password-input-group">
+          {{ field }}
+          <button class="btn password-visibility-toggle" type="button" data-password-toggle aria-label="Show password" aria-controls="{{ field.id_for_label }}" aria-pressed="false">
+            <i class="bi bi-eye-slash" aria-hidden="true"></i>
+          </button>
+        </div>
+      {% else %}
+        {{ field }}
+      {% endif %}
+    {% endif %}
+
+    {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+    {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+  </div>
+{% endfor %}

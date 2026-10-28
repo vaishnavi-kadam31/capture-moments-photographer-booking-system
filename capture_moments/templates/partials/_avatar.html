@@ -1,0 +1,5 @@
+{% if profile.profile_photo %}
+  <img src="{{ profile.profile_photo.url }}" alt="{{ profile.display_name }}" class="avatar {{ size_class }}">
+{% else %}
+  <div class="avatar avatar-initial {{ size_class }}">{{ profile.display_name|slice:":1"|upper }}</div>
+{% endif %}

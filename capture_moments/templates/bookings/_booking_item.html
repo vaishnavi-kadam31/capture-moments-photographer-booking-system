@@ -1,0 +1,20 @@
+<div class="card cm-card mb-3"><div class="card-body">
+  <div class="d-flex justify-content-between flex-wrap gap-2">
+    <div>
+      <h3 class="h6 mb-1">{{ b.client.display_name }} <span class="badge text-bg-{{ b.badge_class }}">{{ b.get_status_display }}</span></h3>
+      <ul class="list-unstyled small mb-2">
+        <li><i class="bi bi-calendar-event"></i> {{ b.event_date|date:"D, d M Y" }} at {{ b.start_time|time:"h:i A" }} ({{ b.duration_hours }} hr{{ b.duration_hours|pluralize }})</li>
+        <li><i class="bi bi-geo-alt"></i> {{ b.event_location }}{% if b.event_type %} &middot; {{ b.event_type.name }}{% endif %}</li>
+        <li><i class="bi bi-currency-rupee"></i> ₹{{ b.total_price|floatformat:"0g" }}</li>
+        {% if b.status == 'accepted' %}<li><i class="bi bi-telephone"></i> {{ b.client.phone }} &middot; {{ b.client.email }}</li>{% endif %}
+        {% if b.message %}<li class="mt-1 fst-italic text-secondary">&ldquo;{{ b.message }}&rdquo;</li>{% endif %}
+      </ul>
+    </div>
+    {% if b.status == 'pending' %}
+    <div class="d-flex gap-2 align-self-start">
+      <form method="post" action="{% url 'bookings:respond' b.pk 'accept' %}">{% csrf_token %}<button class="btn btn-sm btn-success">Accept</button></form>
+      <form method="post" action="{% url 'bookings:respond' b.pk 'reject' %}" onsubmit="return confirm('Decline this request?');">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Decline</button></form>
+    </div>
+    {% endif %}
+  </div>
+</div></div>

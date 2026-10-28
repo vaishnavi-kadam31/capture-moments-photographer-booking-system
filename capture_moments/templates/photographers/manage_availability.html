@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Availability{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="h2 mb-3">Manage your account</h1>
+  {% include "photographers/_manage_nav.html" with active="availability" %}
+  <p class="text-secondary">You are available on every future day by default. Block the days you can't work. Days with an accepted booking are marked <em>Booked</em> automatically.</p>
+  <div class="row g-4">
+    <div class="col-lg-5"><div class="card cm-card p-4">{% include "partials/_calendar.html" %}</div></div>
+    <div class="col-lg-7">
+      <div class="card cm-card p-4 mb-4">
+        <h2 class="h5">Block a date</h2>
+        <form method="post" novalidate>{% csrf_token %}{% include "partials/_form.html" %}<button class="btn btn-gold" type="submit">Mark unavailable</button></form>
+      </div>
+      <div class="card cm-card p-4">
+        <h2 class="h5">Upcoming unavailable dates</h2>
+        <ul class="list-group list-group-flush">
+          {% for b in upcoming %}
+            <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
+              <span>{{ b.date|date:"D, d M Y" }}{% if b.reason %} <small class="text-secondary">&mdash; {{ b.reason }}</small>{% endif %}</span>
+              <form method="post" action="{% url 'photographers:remove_blocked_date' b.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-light">Make available</button></form>
+            </li>
+          {% empty %}<li class="list-group-item bg-transparent text-secondary">No blocked dates.</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

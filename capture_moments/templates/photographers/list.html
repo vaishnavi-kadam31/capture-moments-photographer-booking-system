@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Find Photographers{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="h2 mb-3">Find a photographer</h1>
+  <form method="get" class="filter-bar mb-4">
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="row g-2 align-items-end">
+      <div class="col-md-3">{{ form.q.label_tag }}{{ form.q }}</div>
+      <div class="col-md-3">{{ form.category.label_tag }}{{ form.category }}</div>
+      <div class="col-md-2">{{ form.city.label_tag }}{{ form.city }}</div>
+      <div class="col-6 col-md-2">{{ form.min_price.label_tag }}{{ form.min_price }}</div>
+      <div class="col-6 col-md-2">{{ form.max_price.label_tag }}{{ form.max_price }}</div>
+      <div class="col-md-3">{{ form.sort.label_tag }}{{ form.sort }}</div>
+      <div class="col-md-3 d-grid"><button class="btn btn-gold" type="submit"><i class="bi bi-funnel me-1"></i>Apply filters</button></div>
+      <div class="col-md-2 d-grid"><a class="btn btn-outline-light" href="{% url 'photographers:list' %}">Clear</a></div>
+    </div>
+    {% for field in form %}{% for error in field.errors %}<div class="invalid-feedback d-block">{{ field.label }}: {{ error }}</div>{% endfor %}{% endfor %}
+  </form>
+
+  <p class="text-secondary">{{ page_obj.paginator.count }} photographer{{ page_obj.paginator.count|pluralize }} found</p>
+  <div class="row g-4">
+    {% for profile in page_obj %}
+      <div class="col-md-6 col-lg-4">{% include "partials/_photographer_card.html" %}</div>
+    {% empty %}
+      <div class="col-12"><div class="alert alert-dark">No photographers match your filters. Try widening your search.</div></div>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <nav class="mt-4" aria-label="Pages"><ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">Previous</a></li>{% endif %}
+    <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+    {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page_obj.next_page_number }}">Next</a></li>{% endif %}
+  </ul></nav>
+  {% endif %}
+</div>
+{% endblock %}

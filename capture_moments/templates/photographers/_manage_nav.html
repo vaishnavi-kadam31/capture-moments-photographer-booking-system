@@ -1,0 +1,7 @@
+<ul class="nav nav-pills cm-pills mb-4">
+  <li class="nav-item"><a class="nav-link {% if active == 'dashboard' %}active{% endif %}" href="{% url 'bookings:photographer_dashboard' %}">Booking requests</a></li>
+  <li class="nav-item"><a class="nav-link {% if active == 'profile' %}active{% endif %}" href="{% url 'photographers:manage_profile' %}">Profile</a></li>
+  <li class="nav-item"><a class="nav-link {% if active == 'portfolio' %}active{% endif %}" href="{% url 'photographers:manage_portfolio' %}">Portfolio</a></li>
+  <li class="nav-item"><a class="nav-link {% if active == 'availability' %}active{% endif %}" href="{% url 'photographers:manage_availability' %}">Availability</a></li>
+  <li class="nav-item"><a class="nav-link" href="{% url 'photographers:detail' profile.pk %}">View public page</a></li>
+</ul>

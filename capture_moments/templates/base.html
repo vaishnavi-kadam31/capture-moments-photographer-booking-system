@@ -1,0 +1,94 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Capture Moments{% endblock %} | Capture Moments</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}?v=4" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-expand-lg navbar-dark cm-nav sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'core:home' %}"><i class="bi bi-camera-fill me-2"></i>Capture Moments</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Home</a></li>
+        {% if not user.is_authenticated or user.is_staff or user.role != 'photographer' %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'photographers:list' %}">Find Photographers</a></li>
+        {% endif %}
+        {% if user.is_authenticated and not user.is_staff %}
+          {% if user.role == 'photographer' %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'bookings:photographer_dashboard' %}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'photographers:manage_portfolio' %}">Portfolio</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'photographers:manage_availability' %}">Availability</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'bookings:client_dashboard' %}">My Bookings</a></li>
+          {% endif %}
+        {% endif %}
+        {% if user.is_staff %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'core:admin_dashboard' %}">Admin Dashboard</a></li>
+        {% endif %}
+      </ul>
+      <ul class="navbar-nav align-items-lg-center gap-lg-2">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link position-relative" href="{% url 'bookings:notifications' %}" aria-label="Notifications">
+              <i class="bi bi-bell-fill"></i>
+              {% if unread_count %}<span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle-x" style="font-size:.65rem">{{ unread_count }}</span>{% endif %}
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle me-1"></i>{{ user.display_name }}</a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'accounts:dashboard' %}">My dashboard</a></li>
+              {% if user.role == 'photographer' and not user.is_staff %}<li><a class="dropdown-item" href="{% url 'photographers:manage_profile' %}">Edit profile</a></li>{% endif %}
+              {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'admin:index' %}">Django admin</a></li>{% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <li><form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="dropdown-item" type="submit">Log out</button></form></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Log in</a></li>
+          <li class="nav-item dropdown">
+            <a class="btn btn-gold btn-sm dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Sign up</a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'accounts:register_client' %}">I want to hire a photographer</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:register_photographer' %}">I'm a photographer</a></li>
+            </ul>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+{% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show cm-alert" role="alert">
+        {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<main class="flex-grow-1">{% block content %}{% endblock %}</main>
+
+<footer class="cm-footer mt-5 py-4">
+  <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+    <span><i class="bi bi-camera-fill me-1"></i>Capture Moments &mdash; find, view and book professional photographers.</span>
+    <span class="text-secondary">College project &middot; Django &amp; AWS</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}?v=5"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Book Professional Photographers{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container py-5">
+    <div class="row align-items-center py-lg-5">
+      <div class="col-lg-7">
+        <p class="eyebrow">Weddings &middot; Portraits &middot; Events &middot; Travel</p>
+        <h1 class="display-3">Every moment deserves a <em>great photographer.</em></h1>
+        <p class="lead text-light-emphasis mb-4">Browse portfolios, check availability and send a booking request in minutes &mdash; all in one place.</p>
+        <form class="hero-search row g-2" method="get" action="{% url 'photographers:list' %}">
+          <div class="col-sm-5">
+            <select name="category" class="form-select" aria-label="Category">
+              <option value="">All categories</option>
+              {% for c in categories %}<option value="{{ c.pk }}">{{ c.name }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-sm-4"><input type="text" name="city" class="form-control" placeholder="City" aria-label="City"></div>
+          <div class="col-sm-3 d-grid"><button class="btn btn-gold" type="submit"><i class="bi bi-search me-1"></i>Search</button></div>
+        </form>
+        <div class="d-flex gap-4 mt-4 text-secondary">
+          <span><strong class="text-white">{{ photographer_count }}</strong> photographers</span>
+          <span><strong class="text-white">{{ booking_count }}</strong> confirmed bookings</span>
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-flex justify-content-center"><i class="bi bi-camera hero-icon"></i></div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <h2 class="section-title">Browse by category</h2>
+  <div class="row g-3">
+    {% for c in categories %}
+      <div class="col-6 col-md-3"><a class="category-tile" href="{% url 'photographers:list' %}?category={{ c.pk }}"><i class="bi bi-aperture"></i><span>{{ c.name }}</span></a></div>
+    {% empty %}
+      <p class="text-secondary">No categories yet. Run <code>python manage.py seed_data</code>.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container py-4">
+  <div class="d-flex justify-content-between align-items-end mb-3">
+    <h2 class="section-title mb-0">Featured photographers</h2>
+    <a href="{% url 'photographers:list' %}" class="link-gold">See all &rarr;</a>
+  </div>
+  <div class="row g-4">
+    {% for profile in featured %}
+      <div class="col-md-6 col-lg-4">{% include "partials/_photographer_card.html" %}</div>
+    {% empty %}
+      <p class="text-secondary">No photographers yet &mdash; be the first to <a class="link-gold" href="{% url 'accounts:register_photographer' %}">join</a>.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container py-5">
+  <h2 class="section-title text-center">How it works</h2>
+  <div class="row g-4 text-center">
+    <div class="col-md-4"><div class="step"><i class="bi bi-search"></i><h3 class="h5">1. Find</h3><p class="text-secondary">Filter by category, city and price. View portfolios and experience.</p></div></div>
+    <div class="col-md-4"><div class="step"><i class="bi bi-calendar-check"></i><h3 class="h5">2. Check &amp; request</h3><p class="text-secondary">See the availability calendar and send a booking request for your date.</p></div></div>
+    <div class="col-md-4"><div class="step"><i class="bi bi-bell"></i><h3 class="h5">3. Get confirmed</h3><p class="text-secondary">The photographer accepts or declines and you are notified instantly.</p></div></div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="cta text-center">
+    <h2>Are you a photographer?</h2>
+    <p class="mb-4">Showcase your portfolio, manage your calendar and receive booking requests.</p>
+    <a href="{% url 'accounts:register_photographer' %}" class="btn btn-gold btn-lg">Create your profile</a>
+  </div>
+</section>
+{% endblock %}

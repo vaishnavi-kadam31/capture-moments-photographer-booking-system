@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Edit profile{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="h2 mb-3">Manage your account</h1>
+  {% include "photographers/_manage_nav.html" with active="profile" %}
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="row g-4">
+      <div class="col-lg-5"><div class="card cm-card p-4"><h2 class="h5">Contact details</h2>{% include "partials/_form.html" with form=user_form %}</div></div>
+      <div class="col-lg-7"><div class="card cm-card p-4"><h2 class="h5">Public profile</h2>{% include "partials/_form.html" with form=profile_form %}</div></div>
+    </div>
+    <button class="btn btn-gold mt-3" type="submit">Save changes</button>
+  </form>
+</div>
+{% endblock %}

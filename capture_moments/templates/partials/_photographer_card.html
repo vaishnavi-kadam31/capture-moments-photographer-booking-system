@@ -1,0 +1,18 @@
+<div class="card cm-card h-100">
+  <div class="card-body d-flex flex-column">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      {% include "partials/_avatar.html" with size_class="avatar-md" %}
+      <div>
+        <h3 class="h5 mb-0">{{ profile.display_name }}</h3>
+        <small class="text-secondary"><i class="bi bi-geo-alt-fill"></i> {{ profile.city }}</small>
+      </div>
+    </div>
+    <div class="mb-3">{% for c in profile.categories.all %}<span class="badge cm-badge me-1">{{ c.name }}</span>{% endfor %}</div>
+    <p class="text-secondary small flex-grow-1">{{ profile.bio|truncatechars:110 }}</p>
+    <div class="d-flex justify-content-between align-items-end">
+      <div><div class="price">₹{{ profile.price_per_hour|floatformat:"0g" }}<small>/hour</small></div>
+        <small class="text-secondary">{{ profile.experience_years }} yr{{ profile.experience_years|pluralize }} experience</small></div>
+      <a href="{% url 'photographers:detail' profile.pk %}" class="btn btn-outline-gold btn-sm">View profile</a>
+    </div>
+  </div>
+</div>

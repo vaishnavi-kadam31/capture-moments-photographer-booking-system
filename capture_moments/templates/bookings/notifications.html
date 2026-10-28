@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="container py-4" style="max-width:760px">
+  <h1 class="h2 mb-3">Notifications</h1>
+  <div class="list-group">
+    {% for n in items %}
+      <a href="{{ n.link|default:'#' }}" class="list-group-item list-group-item-action cm-notif {% if not n.is_read %}unread{% endif %}">
+        <div class="d-flex justify-content-between"><span>{{ n.message }}</span>{% if not n.is_read %}<span class="badge text-bg-warning">New</span>{% endif %}</div>
+        <small class="text-secondary">{{ n.created_at|date:"d M Y, h:i A" }}</small>
+      </a>
+    {% empty %}<div class="alert alert-dark">You have no notifications yet.</div>{% endfor %}
+  </div>
+</div>
+{% endblock %}

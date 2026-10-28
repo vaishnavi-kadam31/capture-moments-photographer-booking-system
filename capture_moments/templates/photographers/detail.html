@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.display_name }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        {% include "partials/_avatar.html" with size_class="avatar-lg" %}
+        <div>
+          <h1 class="h2 mb-1">{{ profile.display_name }}</h1>
+          <div class="text-secondary"><i class="bi bi-geo-alt-fill"></i> {{ profile.city }} &middot; {{ profile.experience_years }} year{{ profile.experience_years|pluralize }} experience</div>
+          <div class="mt-2">{% for c in profile.categories.all %}<span class="badge cm-badge me-1">{{ c.name }}</span>{% endfor %}</div>
+        </div>
+      </div>
+      <div class="profile-details-panel mt-4">
+        <h2 class="h5">About</h2>
+        <p>{{ profile.bio|linebreaksbr }}</p>
+        <h2 class="h5 mt-4">Services</h2>
+        <ul class="service-list">{% for s in profile.services_list %}<li><i class="bi bi-check2-circle"></i> {{ s }}</li>{% endfor %}</ul>
+
+        <h2 class="h5 mt-4">Portfolio</h2>
+        <div class="row g-2">
+          {% for img in profile.portfolio.all %}
+            <div class="col-6 col-md-4">
+              <a href="#" class="gallery-item" data-bs-toggle="modal" data-bs-target="#lightbox" data-src="{{ img.image.url }}" data-caption="{{ img.caption }}">
+                <img src="{{ img.image.url }}" alt="{{ img.caption|default:'Portfolio photo' }}" loading="lazy">
+              </a>
+            </div>
+          {% empty %}<p class="text-secondary">This photographer hasn't uploaded portfolio images yet.</p>{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card cm-card p-4 sticky-lg-top" style="top:5.5rem">
+        <div class="price mb-1">₹{{ profile.price_per_hour|floatformat:"0g" }}<small>/hour</small></div>
+        {% if user.is_authenticated %}
+          {% if can_book %}
+            <a class="btn btn-gold w-100 my-3" href="{% url 'bookings:create' profile.pk %}"><i class="bi bi-calendar-plus me-1"></i>Request a booking</a>
+          {% else %}
+            <div class="alert alert-dark small my-3">Only client accounts can send booking requests.</div>
+          {% endif %}
+        {% else %}
+          <a class="btn btn-gold w-100 my-3" href="{% url 'accounts:login' %}?next={% url 'bookings:create' profile.pk %}">Log in to book</a>
+        {% endif %}
+        <h2 class="h6">Availability</h2>
+        {% include "partials/_calendar.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="lightbox" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header border-0"><h2 class="modal-title h6" id="lightbox-caption"></h2><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div>
+    <div class="modal-body text-center pt-0"><img id="lightbox-img" src="" alt="" class="img-fluid rounded"></div>
+  </div></div>
+</div>
+{% endblock %}

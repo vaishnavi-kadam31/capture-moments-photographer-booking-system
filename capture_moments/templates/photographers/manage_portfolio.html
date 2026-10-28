@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Portfolio{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="h2 mb-3">Manage your account</h1>
+  {% include "photographers/_manage_nav.html" with active="portfolio" %}
+  <div class="card cm-card p-4 mb-4">
+    <h2 class="h5">Upload photos</h2>
+    <form method="post" enctype="multipart/form-data" class="row g-2 align-items-end">
+      {% csrf_token %}
+      <div class="col-md-5"><label class="form-label" for="images">Images (JPG/PNG, max 5 MB each, up to 10 at once)</label>
+        <input class="form-control" type="file" id="images" name="images" accept="image/*" multiple required></div>
+      <div class="col-md-4"><label class="form-label" for="caption">Caption (optional)</label>
+        <input class="form-control" type="text" id="caption" name="caption" maxlength="120"></div>
+      <div class="col-md-3 d-grid"><button class="btn btn-gold" type="submit"><i class="bi bi-upload me-1"></i>Upload</button></div>
+    </form>
+  </div>
+  <div class="row g-3">
+    {% for img in images %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card cm-card h-100">
+          <img src="{{ img.image.url }}" class="card-img-top portfolio-thumb" alt="{{ img.caption|default:'Portfolio photo' }}" loading="lazy">
+          <div class="card-body p-2 d-flex justify-content-between align-items-center">
+            <small class="text-secondary text-truncate">{{ img.caption|default:"No caption" }}</small>
+            <form method="post" action="{% url 'photographers:delete_portfolio_image' img.pk %}" onsubmit="return confirm('Delete this image?');">{% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger" aria-label="Delete image"><i class="bi bi-trash"></i></button></form>
+          </div>
+        </div>
+      </div>
+    {% empty %}<p class="text-secondary">No images yet. Upload your best work above.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

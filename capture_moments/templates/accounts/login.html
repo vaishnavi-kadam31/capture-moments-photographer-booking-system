@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-md-6 col-lg-5">
+  <div class="card cm-card p-4">
+    <h1 class="h3 mb-3">Welcome back</h1>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% include "partials/_form.html" %}
+      <button class="btn btn-gold w-100" type="submit">Log in</button>
+    </form>
+    <hr>
+    <p class="small mb-1">New here? <a class="link-gold" href="{% url 'accounts:register_client' %}">Sign up as a client</a></p>
+    <p class="small mb-0">Photographer? <a class="link-gold" href="{% url 'accounts:register_photographer' %}">Create a photographer account</a></p>
+  </div>
+</div></div></div>
+{% endblock %}

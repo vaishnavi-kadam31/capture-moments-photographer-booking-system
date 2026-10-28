@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Book {{ profile.display_name }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <a class="link-gold small" href="{% url 'photographers:detail' profile.pk %}">&larr; Back to profile</a>
+  <h1 class="h2 my-3">Request a booking with {{ profile.display_name }}</h1>
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card cm-card p-4">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% include "partials/_form.html" %}
+          <p class="small text-secondary">Estimated price = ₹{{ profile.price_per_hour|floatformat:"0g" }} &times; hours. The photographer confirms the final details.</p>
+          <button class="btn btn-gold w-100" type="submit">Send booking request</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-5"><div class="card cm-card p-4"><h2 class="h6">Check their availability</h2>{% include "partials/_calendar.html" %}</div></div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}My Bookings{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h1 class="h2 mb-0">My bookings</h1>
+    <a class="btn btn-gold" href="{% url 'photographers:list' %}"><i class="bi bi-search me-1"></i>Find photographers</a>
+  </div>
+  <ul class="nav nav-pills cm-pills mb-3">
+    <li class="nav-item"><a class="nav-link {% if not status %}active{% endif %}" href="{% url 'bookings:client_dashboard' %}">All ({{ total }})</a></li>
+    {% for value, label in status_choices %}
+      <li class="nav-item"><a class="nav-link {% if status == value %}active{% endif %}" href="?status={{ value }}">{{ label }}</a></li>
+    {% endfor %}
+  </ul>
+  <div class="row g-3">
+    {% for b in bookings %}
+      <div class="col-lg-6">
+        <div class="card cm-card h-100"><div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h2 class="h5"><a class="link-gold" href="{% url 'photographers:detail' b.photographer.pk %}">{{ b.photographer.display_name }}</a></h2>
+            <span class="badge text-bg-{{ b.badge_class }} align-self-start">{{ b.get_status_display }}</span>
+          </div>
+          <ul class="list-unstyled small mb-3">
+            <li><i class="bi bi-calendar-event"></i> {{ b.event_date|date:"D, d M Y" }} at {{ b.start_time|time:"h:i A" }} ({{ b.duration_hours }} hr{{ b.duration_hours|pluralize }})</li>
+            <li><i class="bi bi-geo-alt"></i> {{ b.event_location }}</li>
+            {% if b.event_type %}<li><i class="bi bi-camera"></i> {{ b.event_type.name }}</li>{% endif %}
+            <li><i class="bi bi-currency-rupee"></i> Estimated total ₹{{ b.total_price|floatformat:"0g" }}</li>
+            <li class="text-secondary">Requested {{ b.created_at|date:"d M Y" }}</li>
+          </ul>
+          {% if b.status == 'pending' or b.status == 'accepted' %}{% if b.event_date > today %}
+            <form method="post" action="{% url 'bookings:cancel' b.pk %}" onsubmit="return confirm('Cancel this booking?');">{% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger">Cancel booking</button></form>
+          {% endif %}{% endif %}
+        </div></div>
+      </div>
+    {% empty %}
+      <div class="col-12"><div class="alert alert-dark">No bookings here yet.</div></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

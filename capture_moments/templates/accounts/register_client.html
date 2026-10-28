@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Client sign up{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-md-8 col-lg-6">
+  <div class="card cm-card p-4">
+    <h1 class="h3 mb-1">Create a client account</h1>
+    <p class="text-secondary">Find photographers and book your next shoot.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "partials/_form.html" %}
+      <button class="btn btn-gold w-100" type="submit">Create account</button>
+    </form>
+    <p class="small mt-3 mb-0">Already registered? <a class="link-gold" href="{% url 'accounts:login' %}">Log in</a> &middot; Photographer? <a class="link-gold" href="{% url 'accounts:register_photographer' %}">Sign up here</a></p>
+  </div>
+</div></div></div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Photographer sign up{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="row justify-content-center"><div class="col-lg-8">
+  <div class="card cm-card p-4">
+    <h1 class="h3 mb-1">Join as a photographer</h1>
+    <p class="text-secondary">Create your profile now. You can upload your portfolio right after.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "partials/_form.html" %}
+      <button class="btn btn-gold w-100" type="submit">Create photographer account</button>
+    </form>
+    <p class="small mt-3 mb-0">Already registered? <a class="link-gold" href="{% url 'accounts:login' %}">Log in</a></p>
+  </div>
+</div></div></div>
+{% endblock %}

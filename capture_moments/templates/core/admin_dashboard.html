@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h1 class="h2 mb-0">Admin dashboard</h1>
+    <a class="btn btn-outline-gold" href="{% url 'admin:index' %}">Open full Django admin</a>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3"><div class="stat"><span>{{ client_count }}</span>Clients</div></div>
+    <div class="col-6 col-lg-3"><div class="stat"><span>{{ photographer_count }}</span>Photographers</div></div>
+    <div class="col-6 col-lg-3"><div class="stat"><span>{{ booking_total }}</span>Bookings</div></div>
+    <div class="col-6 col-lg-3"><div class="stat">
+      {% for label, n, value in status_counts %}<small class="d-block">{{ label }}: <strong>{{ n }}</strong></small>{% endfor %}</div></div>
+  </div>
+
+  <ul class="nav nav-tabs cm-tabs mb-3" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-bookings" type="button">Bookings</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-photographers" type="button">Photographers</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-clients" type="button">Clients</button></li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="tab-bookings">
+      <div class="table-responsive"><table class="table cm-table align-middle">
+        <thead><tr><th>#</th><th>Client</th><th>Photographer</th><th>Date</th><th>Total</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        {% for b in bookings %}
+          <tr><td>{{ b.pk }}</td><td>{{ b.client.display_name }}</td><td>{{ b.photographer.display_name }}</td>
+            <td>{{ b.event_date|date:"d M Y" }}</td><td>₹{{ b.total_price|floatformat:"0g" }}</td>
+            <td><span class="badge text-bg-{{ b.badge_class }}">{{ b.get_status_display }}</span></td>
+            <td class="text-end">{% if b.status == 'pending' or b.status == 'accepted' %}
+              <form method="post" action="{% url 'core:admin_cancel_booking' b.pk %}" onsubmit="return confirm('Cancel this booking?');">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Cancel</button></form>{% endif %}</td></tr>
+        {% empty %}<tr><td colspan="7" class="text-secondary">No bookings yet.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-photographers">
+      <div class="table-responsive"><table class="table cm-table align-middle">
+        <thead><tr><th>Name</th><th>City</th><th>Price/hr</th><th>Account</th><th></th></tr></thead>
+        <tbody>
+        {% for p in photographers %}
+          <tr><td><a class="link-gold" href="{% url 'photographers:detail' p.pk %}">{{ p.display_name }}</a></td><td>{{ p.city }}</td><td>₹{{ p.price_per_hour|floatformat:"0g" }}</td>
+            <td>{% if p.user.is_active %}<span class="badge text-bg-success">Active</span>{% else %}<span class="badge text-bg-secondary">Deactivated</span>{% endif %}</td>
+            <td class="text-end"><form method="post" action="{% url 'core:toggle_user' p.user.pk %}">{% csrf_token %}
+              <button class="btn btn-sm btn-outline-light">{% if p.user.is_active %}Deactivate{% else %}Activate{% endif %}</button></form></td></tr>
+        {% empty %}<tr><td colspan="5" class="text-secondary">No photographers yet.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-clients">
+      <div class="table-responsive"><table class="table cm-table align-middle">
+        <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Account</th><th></th></tr></thead>
+        <tbody>
+        {% for c in clients %}
+          <tr><td>{{ c.display_name }}</td><td>{{ c.email }}</td><td>{{ c.date_joined|date:"d M Y" }}</td>
+            <td>{% if c.is_active %}<span class="badge text-bg-success">Active</span>{% else %}<span class="badge text-bg-secondary">Deactivated</span>{% endif %}</td>
+            <td class="text-end"><form method="post" action="{% url 'core:toggle_user' c.pk %}">{% csrf_token %}
+              <button class="btn btn-sm btn-outline-light">{% if c.is_active %}Deactivate{% else %}Activate{% endif %}</button></form></td></tr>
+        {% empty %}<tr><td colspan="5" class="text-secondary">No clients yet.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Photographer Dashboard{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="h2 mb-3">Manage your account</h1>
+  {% include "photographers/_manage_nav.html" with active="dashboard" %}
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat"><span>{{ pending|length }}</span>Pending requests</div></div>
+    <div class="col-6 col-md-3"><div class="stat"><span>{{ upcoming|length }}</span>Upcoming shoots</div></div>
+    <div class="col-6 col-md-3"><div class="stat"><span>{{ total }}</span>Total requests</div></div>
+    <div class="col-6 col-md-3"><div class="stat"><span>{{ portfolio_count }}</span>Portfolio photos</div></div>
+  </div>
+
+  <h2 class="h4">Pending requests</h2>
+  {% for b in pending %}{% include "bookings/_booking_item.html" %}{% empty %}<p class="text-secondary">No pending requests.</p>{% endfor %}
+
+  <h2 class="h4 mt-4">Upcoming shoots</h2>
+  {% for b in upcoming %}{% include "bookings/_booking_item.html" %}{% empty %}<p class="text-secondary">No upcoming accepted bookings.</p>{% endfor %}
+
+  <h2 class="h4 mt-4">History</h2>
+  {% for b in history %}{% include "bookings/_booking_item.html" %}{% empty %}<p class="text-secondary">Nothing here yet.</p>{% endfor %}
+</div>
+{% endblock %}
